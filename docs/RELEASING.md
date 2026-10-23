@@ -14,7 +14,7 @@
 4. Actions의 `desktop` 실행이 끝나면 같은 릴리스의 Assets에서 설치 파일을 받는다.
 
 태그와 package.json 버전이 다르면 실패한다. workflow가 포함된 커밋에 태그를 붙여야 한다.
-빌드와 설치 후 smoke 검증을 모두 통과한 뒤 Windows x64 EXE, macOS ARM64/x64 DMG·ZIP,
+빌드와 설치 후 smoke 검증을 모두 통과한 뒤 Windows x64 EXE, macOS ARM64 DMG·ZIP,
 Linux x64 AppImage, 자동 업데이트 메타데이터, SHA256SUMS.txt를 첨부한다.
 릴리스 본문과 prerelease 설정은 수정하지 않는다. 기존 수동 실행은 브랜치에서 Actions
 아티팩트만 생성하며, `v*` 태그에서 실행하면 검증 후 draft를 게시하는 기존 흐름을 유지한다.

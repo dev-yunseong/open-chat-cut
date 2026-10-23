@@ -69,14 +69,6 @@ jobs:
               release/*.zip
               release/latest-arm64-mac.yml
               release/*.blockmap
-          - name: macOS-x64
-            os: macos-15-intel
-            script: desktop:dist:mac-x64
-            artifact: |
-              release/*.dmg
-              release/*.zip
-              release/latest-x64-mac.yml
-              release/*.blockmap
           - name: Windows-x64
             os: windows-latest
             script: desktop:dist:win
@@ -345,15 +337,13 @@ jobs:
         run: |
           set -euo pipefail
           EXPECTED_VERSION="${GITHUB_REF_NAME#v}"
-          test "$(find release-files -type f \( -name '*.dmg' -o -name '*.exe' -o -name '*.AppImage' \) | wc -l | tr -d ' ')" = 4
-          test "$(find release-files -type f -name '*.zip' | wc -l | tr -d ' ')" = 2
-          test "$(find release-files -type f -name '*.yml' | wc -l | tr -d ' ')" = 4
+          test "$(find release-files -type f \( -name '*.dmg' -o -name '*.exe' -o -name '*.AppImage' \) | wc -l | tr -d ' ')" = 3
+          test "$(find release-files -type f -name '*.zip' | wc -l | tr -d ' ')" = 1
+          test "$(find release-files -type f -name '*.yml' | wc -l | tr -d ' ')" = 3
           test -f release-files/latest-arm64-mac.yml
-          test -f release-files/latest-x64-mac.yml
           test -f release-files/latest-x64.yml
           test -f release-files/latest-x64-linux.yml
           test -f "release-files/OpenChatCut-${EXPECTED_VERSION}-arm64.zip.blockmap"
-          test -f "release-files/OpenChatCut-${EXPECTED_VERSION}-x64.zip.blockmap"
           test -f "release-files/OpenChatCut-${EXPECTED_VERSION}-x64.exe.blockmap"
 
       - name: Generate checksums

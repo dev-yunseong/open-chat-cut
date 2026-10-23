@@ -183,7 +183,6 @@ OpenChatCut은 **대화형 에이전트와 전문적인 타임라인 편집을 �
 |---|---|
 | Windows x64 | `.exe` 설치 프로그램 |
 | macOS Apple Silicon | `arm64.dmg` |
-| macOS Intel | `x64.dmg` |
 | Linux x64 | `.AppImage` |
 
 원본 앱 사용자는 처음 한 번 이 포크의 설치 파일로 교체해야 합니다. 이후 Windows·Linux 앱은 **이 저장소의 정식 릴리스**에서 업데이트를 확인합니다. macOS는 새 DMG를 직접 설치합니다. prerelease와 낮은 버전은 자동 적용하지 않습니다.

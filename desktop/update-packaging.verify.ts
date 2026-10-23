@@ -172,16 +172,15 @@ assert.match(
 );
 
 const workflow = (await readFile(new URL('../.github/workflows/desktop.yml', import.meta.url), 'utf8')).replace(/\r\n/g, '\n');
-for (const metadata of ['latest-arm64-mac.yml', 'latest-x64-mac.yml', 'latest-x64.yml', 'latest-x64-linux.yml']) {
+for (const metadata of ['latest-arm64-mac.yml', 'latest-x64.yml', 'latest-x64-linux.yml']) {
   assert.ok(workflow.includes(`release/${metadata}`), `desktop jobs must upload ${metadata}`);
 }
 assert.doesNotMatch(workflow, /release\/\*\.yml/, 'debug YAML must not leak into release artifacts');
 assert.match(workflow, /EXPECTED_VERSION="\$\{GITHUB_REF_NAME#v\}"/, 'release gate must derive its package version');
 assert.match(workflow, /release\/\*\.blockmap/, 'desktop jobs must upload differential download metadata');
-assert.match(workflow, /-name '\*\.zip'.* = 2/, 'release aggregation must retain both macOS update archives');
+assert.match(workflow, /-name '\*\.zip'.* = 1/, 'release aggregation must retain the Apple Silicon update archive');
 for (const blockmap of [
   'arm64.zip.blockmap',
-  'x64.zip.blockmap',
   'x64.exe.blockmap',
 ]) {
   assert.ok(
@@ -190,7 +189,7 @@ for (const blockmap of [
   );
 }
 assert.match(workflow, /test -f release-files\/latest-arm64-mac\.yml/);
-assert.match(workflow, /test -f release-files\/latest-x64-mac\.yml/);
+assert.doesNotMatch(workflow, /macOS-x64|macos-15-intel|latest-x64-mac\.yml/, 'release CI must exclude Intel macOS');
 assert.match(workflow, /test -f release-files\/latest-x64\.yml/);
 assert.match(workflow, /test -f release-files\/latest-x64-linux\.yml/);
 assert.match(workflow, /release-files\/\*/, 'GitHub Release must publish installers and update metadata together');
