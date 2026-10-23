@@ -1,7 +1,7 @@
 // Skinning engine: skin = a set of design token values. The tokens of theme.ts are all
 // var(--cc-*) indirect reference, the true value is the SKINS registry here; when booting, initSkins() puts all
 // The skin is generated into a <style> and injected into the head, switch = change an attribute of <html data-cc-skin>,
-// Hundreds of inline styles with zero changes and zero re-rendering. Persistence localStorage('cc.skin').
+// Hundreds of inline styles with zero changes and zero re-rendering. Persistence localStorage('cc.skin.studio-v1').
 // Security boundary (audited): The theme token is not consumed in synthesis/GL/canvas, and export and burning are not affected by the skin;
 // Full position without hex splicing (`${theme.x}22`) and SVG attribute bit (fill= attribute does not parse var).
 // Translucent "ink" (--cc-ink-rgb) and accent glow (--cc-accent-rgb) with R,G,B bare triples
@@ -50,7 +50,7 @@ export interface SkinDef {
   tokens: SkinTokens;
 }
 
-// Graphite = default skin (consistent with the look and feel before the skin-changing system was implemented).
+// Graphite preserves the original dark palette; Studio below is the default.
 const GRAPHITE: SkinTokens = {
   bg: '#101010', inset: '#141414', panel: '#181818', panelAlt: '#212121', hover: '#2c2c2c',
   border: '#363636', borderLight: '#4a4a4a',
@@ -71,6 +71,22 @@ const GRAPHITE: SkinTokens = {
 // textDim/panel ≥ 4.5, onAccent/accent ≥ 4.5 (script skin-by-skin assertion, individual official grayscale
 // Fine-tune L to meet the standard). Pastel accent skin (Mocha/Arctic/Tokyo Night/Latte) onAccent uses dark fonts.
 export const SKINS: readonly SkinDef[] = [
+  // Added 2026-10-23: warm paper surfaces and a deep green studio accent.
+  {
+    id: 'studio', nameZh: '明亮工作室',
+    tokens: {
+      ...GRAPHITE,
+      bg: '#eeefeb', inset: '#f0f2ee', panel: '#fcfdfb', panelAlt: '#f4f6f2', hover: '#e5ece5',
+      border: '#dce2d9', borderLight: '#b6c2b6',
+      text: '#253b32', textMuted: '#52665a', textDim: '#617164', textStrong: '#152b21',
+      accent: '#286448', accentDeep: '#1b4c35', accentRgb: '40,100,72', onAccent: '#ffffff',
+      inkRgb: '25,49,36', shadowRgb: '28,49,36', colorScheme: 'light',
+      gold: '#9b6b22', select: '#286448', success: '#28734d', danger: '#b4443c',
+      tlTrack: '#f2f4ef', tlSidePanel: '#f8faf6',
+      trackVideo: '#426d91', trackAudioA1: '#876633', trackAudioA2: '#3b7960', trackCaption: '#82648d',
+      clipVideo: '#426d91', clipAudio: '#3b7960', clipMg: '#82648d', clipText: '#876633',
+    },
+  },
   { id: 'graphite', nameZh: '石墨', tokens: GRAPHITE },
   {
     id: 'midnight', nameZh: '墨黑',
@@ -138,8 +154,8 @@ export const SKINS: readonly SkinDef[] = [
   },
 ];
 
-const STORAGE_KEY = 'cc.skin';
-export const DEFAULT_SKIN = 'graphite';
+const STORAGE_KEY = 'cc.skin.studio-v1';
+export const DEFAULT_SKIN = 'studio';
 
 const kebab = (name: string): string => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 
@@ -164,6 +180,10 @@ export function getSkin(): string {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && SKINS.some((s) => s.id === saved)) return saved;
+    // Old initSkins persisted Graphite even without a user choice. Migrate that
+    // legacy default once; keep other palettes, and allow Graphite in the new picker.
+    const legacy = localStorage.getItem('cc.skin');
+    if (!saved && legacy && legacy !== 'graphite' && SKINS.some((s) => s.id === legacy)) return legacy;
   } catch { /* If storage is not available, use the default*/ }
   return DEFAULT_SKIN;
 }

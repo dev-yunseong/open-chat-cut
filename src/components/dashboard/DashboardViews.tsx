@@ -78,8 +78,8 @@ export function DashboardTitlebarContent({ model }: { model: DashboardModel }) {
 function ProjectToolbar({ projects, model }: { projects: ProjectMeta[]; model: DashboardModel }) {
   const t = useT();
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-      <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>{t('工程')}</h1>
+    <div className="cc-project-toolbar" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+      <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>{t('工程')}</h2>
       {model.transfer.note && <span style={{ color: theme.textDim, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{model.transfer.note}</span>}
       <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
         <ProjectSearch value={model.query} onChange={model.setQuery} />
@@ -140,13 +140,13 @@ function ProjectActions({ project, props, model }: { project: ProjectMeta; props
 function ProjectCard({ project, props, model }: { project: ProjectMeta; props: DashboardProps; model: DashboardModel }) {
   const t = useT();
   return (
-    <div style={card}>
-      <button onClick={() => props.onOpen(project.id)} style={thumb} title={t('打开 {name}', { name: project.name })}>
+    <div className="cc-project-card" style={card}>
+      <button className="cc-project-thumbnail" onClick={() => props.onOpen(project.id)} style={thumb} title={t('打开 {name}', { name: project.name })}>
         {model.thumbs[project.id]
           ? <img src={model.thumbs[project.id]} alt="" draggable={false} loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
           : <span style={{ color: theme.borderLight, display: 'inline-flex' }}><Icon name="play" size={26} /></span>}
       </button>
-      <div style={{ padding: '9px 11px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div className="cc-project-details" style={{ padding: '9px 11px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         <ProjectName project={project} model={model} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 11, color: theme.textDim, fontVariantNumeric: 'tabular-nums' }}>{relativeProjectTime(project.updatedAt, t)}</span>
@@ -161,8 +161,8 @@ function ProjectGrid({ props, model }: { props: DashboardProps; model: Dashboard
   const t = useT();
   return (
     <>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(232px, 1fr))', alignItems: 'start', gap: 16 }}>
-        <button onClick={props.onNew} style={newCard} title={t('新建工程')}>
+      <div className="cc-project-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(232px, 1fr))', alignItems: 'start', gap: 16 }}>
+        <button className="cc-new-project-card" onClick={props.onNew} style={newCard} title={t('新建工程')}>
           <span style={{ fontSize: 30, color: theme.textDim, lineHeight: 1 }}>＋</span>
           <span style={{ fontSize: 13, color: theme.textDim }}>{t('新建工程')}</span>
         </button>
@@ -176,9 +176,22 @@ function ProjectGrid({ props, model }: { props: DashboardProps; model: Dashboard
 }
 
 export function DashboardContent({ props, model }: { props: DashboardProps; model: DashboardModel }) {
+  const t = useT();
   return (
     <main style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-      <div style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 24px 80px' }}>
+      <div className="cc-dashboard-content" style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 24px 80px' }}>
+        <section className="cc-studio-intro">
+          <div>
+            <span className="cc-studio-eyebrow">OPENCHATCUT / STUDIO</span>
+            <h1>{t('让灵感成为下一帧。')}</h1>
+            <p>{t('从一个想法开始，把故事剪成你喜欢的样子。')}</p>
+            <button className="cc-studio-create" onClick={props.onNew}><Icon name="plus" size={16} />{t('新建工程')}<span aria-hidden="true">↗</span></button>
+          </div>
+          <div className="cc-studio-art" aria-hidden="true">
+            <div className="cc-studio-frame"><span>01 / YOUR NEXT STORY</span><div className="cc-studio-orbit" /><i /><b>Make the cut.</b></div>
+            <div className="cc-studio-film"><span /><span /><span /><span /></div>
+          </div>
+        </section>
         {model.modelSnapshot.loaded && model.modelSnapshot.choices.length === 0 && <ModelSetupCard onOpen={() => model.setDialog('settings', true)} />}
         <ProjectToolbar projects={props.projects} model={model} />
         <ProjectGrid props={props} model={model} />

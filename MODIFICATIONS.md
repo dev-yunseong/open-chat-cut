@@ -6,6 +6,8 @@ The upstream authors retain their copyright. This fork remains licensed under
 
 ## Changes
 
+- Add a light Studio default palette and redesign dashboard/editor surfaces and typography.
+  Migrate the legacy Graphite default once; preserve other legacy palettes and all new explicit choices.
 - Add Korean UI and template translations using the existing lazy dictionary architecture.
 - Default to Korean when no valid language choice is saved; preserve existing saved choices.
 - Recognize Korean in server UI-locale synchronization and agent language selection.
