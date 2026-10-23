@@ -40,30 +40,36 @@ const errorCode = (error: unknown): string | null => {
 };
 
 const DIRECT_REMEDY = {
+  // Korean variants added 2026-10-23.
+  ko: '현재 네트워크에서 주소가 차단되었거나 프록시가 필요할 수 있습니다. 연결을 확인하거나 설정 → 에이전트 모델에서 PROXY_URL을 설정하세요. 직접 연결 가능한 미디어 URL을 사용할 수도 있습니다.',
   zh: '该地址可能被当前网络屏蔽或需要代理。请检查网络，或在 设置 → Agent 模型 中配置 PROXY_URL；也可以换一个能直连的素材地址。',
   en: 'The host may be blocked on this network or need a proxy. Check the connection, set PROXY_URL under Settings → Agent model, or use a media URL that is reachable directly.',
   ru: 'Хост может быть заблокирован в этой сети или требовать прокси. Проверьте соединение, задайте PROXY_URL в Настройки → Модель агента или используйте адрес, доступный напрямую.',
   it: 'L\'host potrebbe essere bloccato su questa rete o richiedere un proxy. Controlla la connessione, imposta PROXY_URL in Impostazioni → Modello agente, oppure usa un URL raggiungibile direttamente.',
 };
 const PROXIED_REMEDY = {
+  ko: '프록시를 사용했지만 호스트에 연결하지 못했습니다. 프록시 규칙을 확인하거나 접근 가능한 미디어 URL을 사용하세요.',
   zh: '当前已经通过代理访问，代理也连不上这个主机。请检查代理规则，或换一个能访问的素材地址。',
   en: 'The request already went through the proxy and the proxy could not reach this host either. Check the proxy rules, or use a media URL it can reach.',
   ru: 'Запрос уже шёл через прокси, но и прокси не смог достучаться до хоста. Проверьте правила прокси или используйте другой адрес.',
   it: 'La richiesta è già passata dal proxy e nemmeno il proxy raggiunge questo host. Controlla le regole del proxy o usa un URL raggiungibile.',
 };
 const CONNECT_TIMEOUT = {
+  ko: (host: string, ms: number, address: string) => `${host} 연결 시간 초과(${ms}ms 내 연결 실패, ${address}). `,
   zh: (host: string, ms: number, address: string) => `连接 ${host} 超时（${ms}ms 内未建立连接，${address}）。`,
   en: (host: string, ms: number, address: string) => `Connecting to ${host} timed out (no connection within ${ms}ms, ${address}). `,
   ru: (host: string, ms: number, address: string) => `Тайм-аут подключения к ${host} (нет соединения за ${ms}мс, ${address}). `,
   it: (host: string, ms: number, address: string) => `Connessione a ${host} scaduta (nessuna connessione entro ${ms}ms, ${address}). `,
 };
 const RESPONSE_TIMEOUT = {
+  ko: (host: string, ms: number, address: string) => `${host}에 연결했지만 ${ms}ms 내에 응답이 없습니다(${address}). `,
   zh: (host: string, ms: number, address: string) => `连接 ${host} 后 ${ms}ms 内没有收到响应（${address}）。`,
   en: (host: string, ms: number, address: string) => `${host} accepted the connection but sent no response within ${ms}ms (${address}). `,
   ru: (host: string, ms: number, address: string) => `${host} принял соединение, но не ответил за ${ms}мс (${address}). `,
   it: (host: string, ms: number, address: string) => `${host} ha accettato la connessione ma non ha risposto entro ${ms}ms (${address}). `,
 };
 const UNREACHABLE = {
+  ko: (host: string, code: string) => `${host}에 연결할 수 없습니다(${code}). `,
   zh: (host: string, code: string) => `无法连接到 ${host}（${code}）。`,
   en: (host: string, code: string) => `Could not connect to ${host} (${code}). `,
   ru: (host: string, code: string) => `Не удалось подключиться к ${host} (${code}). `,

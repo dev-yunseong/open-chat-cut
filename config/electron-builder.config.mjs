@@ -77,8 +77,9 @@ export default {
   compression: 'maximum',
   publish: [{
     provider: 'github',
-    owner: '0xsline',
-    repo: 'OpenChatCut',
+    // Modified 2026-10-23: updates must stay on this Korean community fork.
+    owner: 'dev-yunseong',
+    repo: 'open-chat-cut',
     channel: updateChannel,
   }],
   files: [

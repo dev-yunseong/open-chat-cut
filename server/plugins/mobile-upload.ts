@@ -14,8 +14,9 @@ function sendJson(res: ServerResponse, status: number, body: unknown): void {
 
 type MobileUploadControls = Pick<MobileUploadService, 'createSession' | 'getSession' | 'closeSession'>;
 
-function mobilePageLocale(value: string | null): 'zh' | 'en' | 'it' | 'ru' {
-  return value === 'en' || value === 'it' || value === 'ru' ? value : 'zh';
+// Modified 2026-10-23: Korean is supported and is the default for this fork.
+function mobilePageLocale(value: string | null): 'ko' | 'zh' | 'en' | 'it' | 'ru' {
+  return value === 'zh' || value === 'en' || value === 'it' || value === 'ru' ? value : 'ko';
 }
 
 function mobileUploadControlAuthorized(req: IncomingMessage, res: ServerResponse): boolean {

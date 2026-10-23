@@ -1,7 +1,5 @@
-// The four locale dictionaries are ~560 kB of source. Importing them statically
-// put all four in the entry chunk, so every user downloaded and parsed three
-// languages they cannot read before the first frame. Each locale is fetched on
-// demand instead.
+// Fetch locale dictionaries on demand instead of including every language in
+// the entry chunk. The Korean and Italian dictionaries also load English fallback.
 //
 // t()/tData() stay SYNCHRONOUS: they read whatever is loaded and fall back to
 // the Chinese original, which is also the dictionary key — the same "never go
@@ -32,6 +30,14 @@ let loaded: Readonly<Partial<Record<Locale, LocaleDicts>>> = {};
 const inFlight = new Map<Locale, Promise<void>>();
 
 async function fetchDicts(locale: Locale): Promise<LocaleDicts> {
+  // Modified 2026-10-23: load Korean on demand, with English fallback for new upstream keys.
+  if (locale === 'ko') {
+    const [ko, koData, en, enData] = await Promise.all([
+      import('./dict/ko'), import('./dict/ko/templates-data'),
+      import('./dict/en'), import('./dict/en/templates-data'),
+    ]);
+    return { ui: ko.KO, uiFallback: en.EN, data: koData.default, dataFallback: enData.default };
+  }
   if (locale === 'zh') {
     // Chinese IS the key language, so only the data names need a table.
     const { ZH_DATA } = await import('./dict/zh');

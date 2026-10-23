@@ -17,8 +17,9 @@
   Website: <a href="https://openchatcut.com">openchatcut.com</a>
 </p>
 
+<!-- Modified 2026-10-23: remove Pro promotion and document this Korean-default fork. -->
 <p align="center">
-  <a href="https://openchatcut.com/pro"><strong>OpenChatCut Pro</strong></a> · Desktop edition: install it and start cutting
+  Korean-default community fork · <a href="MODIFICATIONS.md">Changes and source availability</a>
 </p>
 
 <p align="center">

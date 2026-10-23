@@ -27,7 +27,9 @@ try {
   const page = await fetch(session.urls[0]!);
   assert.equal(page.status, 200);
   assert.match(page.headers.get('content-security-policy') ?? '', /default-src 'self'/);
-  assert.match(await page.text(), /OpenChatCut/);
+  const pageHtml = await page.text();
+  assert.match(pageHtml, /<html lang="ko">/);
+  assert.match(pageHtml, /미디어 보내기/);
 
   const pngBytes = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
   const uploaded = await fetch(`${session.urls[0]}/upload?name=${encodeURIComponent('camera.png')}`, {
@@ -77,6 +79,8 @@ try {
   assert.equal(heic.status, 200);
 
   const englishSession = await service.createSession('en');
+  const koreanSession = await service.createSession('ko');
+  assert.match(await (await fetch(koreanSession.urls[0]!)).text(), /미디어 선택/);
   assert.match(await (await fetch(englishSession.urls[0]!)).text(), /Send media to OpenChatCut/);
   const italianSession = await service.createSession('it');
   assert.match(await (await fetch(italianSession.urls[0]!)).text(), /Send media to OpenChatCut/);

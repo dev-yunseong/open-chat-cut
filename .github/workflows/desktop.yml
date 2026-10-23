@@ -1,10 +1,13 @@
-# Desktop release workflow. It only runs when manually dispatched.
+# Desktop release workflow: release publication and manual dispatch.
+# Modified 2026-10-23: published releases automatically receive fork installers.
 # Run it against a branch to build Actions artifacts, or against a v* tag to
 # publish a GitHub Release with installers and SHA-256 checksums.
 # GitHub automatically adds source archives to every release.
 name: desktop
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +20,7 @@ concurrency:
 jobs:
   validate:
     name: Validate
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -32,7 +36,7 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Verify release version
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
         shell: bash
         run: |
           expected="v$(node -p "require('./package.json').version")"
@@ -83,6 +87,7 @@ jobs:
               release/latest-x64-linux.yml
               release/*.blockmap
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -313,7 +318,8 @@ jobs:
 
   release:
     name: Publish Release
-    if: startsWith(github.ref, 'refs/tags/v')
+    timeout-minutes: 30
+    if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
     needs: package
     runs-on: ubuntu-latest
     permissions:
@@ -350,6 +356,7 @@ jobs:
         run: sha256sum ./* > SHA256SUMS.txt
 
       - name: Create or reuse draft release
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
@@ -417,7 +424,7 @@ jobs:
             if release_json="$(gh release view "$GITHUB_REF_NAME" \
               --repo "$GITHUB_REPOSITORY" \
               --json isDraft,assets)"; then
-              if [[ "$(jq -r '.isDraft' <<<"$release_json")" != "true" ]]; then
+              if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" && "$(jq -r '.isDraft' <<<"$release_json")" != "true" ]]; then
                 echo "Release $GITHUB_REF_NAME became public before asset verification" >&2
                 exit 1
               fi
@@ -438,6 +445,7 @@ jobs:
           [[ "$verified" == "true" ]]
 
       - name: Publish verified draft
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail

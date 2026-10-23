@@ -2,7 +2,7 @@
 # build. Runs on pull requests and when a v* tag is pushed (release time, where
 # it also validates the tag against package.json). Ordinary branch pushes stay
 # quiet — use workflow_dispatch for those. Desktop installers + GitHub Release
-# publishing stay in desktop.yml (manual).
+# publishing stay in desktop.yml (release published or manual dispatch).
 #
 # Pull requests were NOT covered until 2026-08-31, and it showed: PR #123 sat
 # open failing `npm run build` (`tsc -b` catches what `tsc --noEmit` does not)

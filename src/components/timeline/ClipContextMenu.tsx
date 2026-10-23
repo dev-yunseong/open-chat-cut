@@ -325,8 +325,9 @@ function Sep() {
   return <div style={{ height: 0.5, background: theme.border, margin: '5px 6px' }} />;
 }
 
-function Item({ label, icon, shortcut, disabled, danger, pro, chevron, onClick }: {
-  label: string; icon: IconName; shortcut?: string; disabled?: boolean; danger?: boolean; pro?: boolean; chevron?: boolean; onClick?: () => void;
+// Modified 2026-10-23: remove the unused Pro promotion badge.
+function Item({ label, icon, shortcut, disabled, danger, chevron, onClick }: {
+  label: string; icon: IconName; shortcut?: string; disabled?: boolean; danger?: boolean; chevron?: boolean; onClick?: () => void;
 }) {
   return (
     <button disabled={disabled} onClick={onClick}
@@ -339,7 +340,6 @@ function Item({ label, icon, shortcut, disabled, danger, pro, chevron, onClick }
       onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}>
       <span style={{ width: 16, display: 'grid', placeItems: 'center', lineHeight: 0, color: danger ? theme.accent : theme.textDim }}><Icon name={icon} size={15} /></span>
       <span style={{ flex: 1 }}>{label}</span>
-      {pro && <span style={{ fontSize: 9, fontWeight: 700, color: theme.accent, border: `0.5px solid ${theme.accent}`, borderRadius: 3, padding: '0 3px' }}>PRO</span>}
       {chevron && <span style={{ color: theme.textDim }}>›</span>}
       {shortcut && <span style={{ color: theme.textDim, fontSize: 10.5, fontVariantNumeric: 'tabular-nums' }}>{shortcut}</span>}
     </button>

@@ -1,5 +1,6 @@
 // EN dictionary (field fragmentation, key = Chinese original text). Data files are exempt from the upper limit of row count.
 export default {
+  '源代码': 'Source code',
   '切换界面语言': 'Switch UI language',
   '返回工程列表': 'Back to projects',
   '双击重命名': 'Double-click to rename',
