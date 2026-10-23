@@ -9,6 +9,7 @@ interface PublishConfig {
 }
 
 interface BuilderConfig {
+  compression?: string;
   publish?: PublishConfig[];
   mac?: { target?: string[] };
   files?: string[];
@@ -23,6 +24,7 @@ async function configFor(target: string): Promise<BuilderConfig> {
 }
 
 const arm64 = await configFor('darwin-arm64');
+assert.equal(arm64.compression, 'normal', 'macOS ZIP compression must fit the release time budget');
 assert.deepEqual(arm64.publish, [{
   provider: 'github',
   owner: 'dev-yunseong',
@@ -50,6 +52,7 @@ assert.ok(
 );
 
 const x64 = await configFor('darwin-x64');
+assert.equal(x64.compression, 'normal', 'Intel macOS must avoid maximum ZIP compression');
 assert.equal(x64.publish?.[0]?.channel, 'latest-x64');
 assert.equal(
   x64.files?.includes('!node_modules/onnxruntime-node/bin/napi-v6/darwin/x64/**'),
@@ -58,6 +61,7 @@ assert.equal(
 );
 
 const linux = await configFor('linux-x64');
+assert.equal(linux.compression, 'maximum');
 for (const worker of ['asr', 'semantic', 'clap', 'rhythm']) {
   assert.ok(
     linux.files?.includes(`desktop-dist/native-${worker}-worker.mjs`),
@@ -98,6 +102,7 @@ assert.equal(
 );
 
 const windows = await configFor('win32-x64');
+assert.equal(windows.compression, 'maximum');
 // Modified 2026-10-23: every shipped platform must stay on the fork's feed.
 for (const [target, config] of Object.entries({
   'darwin-arm64': arm64, 'darwin-x64': x64, 'linux-x64': linux, 'win32-x64': windows,

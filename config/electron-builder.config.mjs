@@ -70,11 +70,10 @@ export default {
   productName: 'OpenChatCut',
   artifactName: '${productName}-${version}-${arch}.${ext}',
   directories: { output: 'release' },
-  // 7z LZMA maximum compression for the distributable installers (dmg/zip/nsis/AppImage).
-  // Trade-off: noticeably slower packaging time in exchange for a smaller final download.
-  // The app.asar content itself is handled by the `compression` setting; native binaries
-  // (onnxruntime-node, ffmpeg-static, @remotion/compositor, sqlite-vec) stay unpacked per asarUnpack.
-  compression: 'maximum',
+  // Modified 2026-10-23: maximum ZIP compression exceeded the macOS Intel CI
+  // budget. Normal compression preserves archive contents and update metadata;
+  // Windows/Linux retain their existing compression. Native binaries remain unpacked.
+  compression: target.startsWith('darwin-') ? 'normal' : 'maximum',
   publish: [{
     provider: 'github',
     // Modified 2026-10-23: updates must stay on this Korean community fork.
