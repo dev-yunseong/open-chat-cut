@@ -34,7 +34,12 @@ jobs:
           # NuGet on linux-x64. CI validates logic only, so skip it.
           ONNXRUNTIME_NODE_INSTALL: 'skip'
       - name: Install ffmpeg
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+        timeout-minutes: 5
+        run: |
+          sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y ffmpeg
+          ffmpeg -version
+          ffprobe -version
       - name: Verify release version
         if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
         shell: bash
