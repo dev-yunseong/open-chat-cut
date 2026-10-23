@@ -98,6 +98,15 @@ assert.equal(
 );
 
 const windows = await configFor('win32-x64');
+// Modified 2026-10-23: every shipped platform must stay on the fork's feed.
+for (const [target, config] of Object.entries({
+  'darwin-arm64': arm64, 'darwin-x64': x64, 'linux-x64': linux, 'win32-x64': windows,
+})) {
+  assert.deepEqual(config.publish, [{
+    provider: 'github', owner: 'dev-yunseong', repo: 'open-chat-cut',
+    channel: target.endsWith('arm64') ? 'latest-arm64' : 'latest-x64',
+  }], `${target} must receive updates exclusively from this fork`);
+}
 assert.equal(
   windows.files?.includes('!node_modules/sqlite-vec-windows-x64/**'),
   false,
