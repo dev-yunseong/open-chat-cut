@@ -9,6 +9,7 @@ import { ALL_LOCALES, getLocale, setLocale, useT } from '../i18n/locale';
 import { invokeAction, bindAction } from '../shortcuts/actionRegistry';
 import { DesktopWindowControls } from './DesktopWindowControls';
 import { TopBarIconButton } from './TopBarIconButton';
+import { SourceLinks } from './SourceLinks';
 
 // Lazy, like the dashboard's copy of this dialog. A static import here put the
 // whole MCP guide into the editor's eager chunk and made every lazy() built on
@@ -18,7 +19,7 @@ const McpGuideDialog = lazy(() => loadMcpGuideDialog().then((m) => ({ default: m
 
 // Language switching: The text pill displays the current language; clicking
 // cycles through the supported locales. First run defaults to the
-// system language (or English) — see i18n/locale.ts.
+// Korean (modified 2026-10-23) — see i18n/locale.ts.
 export function LocaleToggle() {
   const t = useT();
   const locale = getLocale();
@@ -32,7 +33,7 @@ export function LocaleToggle() {
       style={{ minWidth: 30, height: 22, background: 'none', border: `0.5px solid ${theme.border}`, borderRadius: 4, cursor: 'pointer', padding: '0 5px', fontSize: 11, fontWeight: 600, letterSpacing: 0.3, color: theme.textDim, display: 'grid', placeItems: 'center' }}
       onMouseEnter={(e) => { e.currentTarget.style.color = theme.text; e.currentTarget.style.background = theme.panelAlt; }}
       onMouseLeave={(e) => { e.currentTarget.style.color = theme.textDim; e.currentTarget.style.background = 'none'; }}>
-      {locale === 'zh' ? '中' : locale.toUpperCase()}
+      {locale === 'ko' ? '한국어' : locale === 'zh' ? '中' : locale.toUpperCase()}
     </button>
   );
 }
@@ -99,15 +100,15 @@ export function TopBar({ projectId, projectName, canUndo, canRedo, exporting, ex
       {/* self-contained: trigger + popover, global export history, zero props */}
       <ExportHistory />
       <LocaleToggle />
+      <SourceLinks />
       <TopBarIconButton icon="layoutPanel" label={t('切换面板布局')} onClick={() => invokeAction('toggle-layout', undefined, 'toolbar')} />
       <button onClick={() => invokeAction('open-export', undefined, 'toolbar')}
-        className="cc-tip cc-tip-r"
+        className="cc-tip cc-tip-r cc-export-primary"
         data-tip={exporting ? t('查看后台导出任务') : t('导出 MP4')}
         aria-label={exporting ? t('查看后台导出任务') : t('导出 MP4')}
         style={{ minWidth: 58, height: 26, background: theme.accent, color: theme.onAccent, border: 'none', borderRadius: 2, padding: '0 8px', fontSize: 12, fontWeight: 600, cursor: 'pointer', marginLeft: 4 }}>
         {exporting ? t('{n} 个导出', { n: Math.max(1, exportJobCount) }) : t('导出')}
       </button>
-      <div title={t('账户')} style={{ width: 20, height: 20, borderRadius: '50%', marginLeft: 2, background: 'conic-gradient(from 210deg, #6d6cff, #ff5f9e, #ffb35f, #6d6cff)', flexShrink: 0 }} />
       </div>
       {/* No fallback: a dialog that is still loading shows nothing, exactly as it
           did before it was opened — the same treatment the other overlays get. */}

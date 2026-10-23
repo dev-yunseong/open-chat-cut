@@ -3,7 +3,7 @@
 // textMuted/panel ≥ 4.5, onAccent/accent ≥ 4.5 (WCAG AA).
 // `npx tsx src/skins.verify.ts`
 import assert from 'node:assert/strict';
-import { DEFAULT_SKIN, SKINS, buildSkinsCss } from './skins';
+import { DEFAULT_SKIN, SKINS, buildSkinsCss, getSkin, applySkin } from './skins';
 
 function luminance(hex: string): number {
   const f = (c: number): number => {
@@ -74,4 +74,35 @@ assert.ok(css.includes('--cc-on-accent:'), 'on-accent 变量输出');
 assert.ok(css.includes('--cc-shadow-rgb:'), 'shadow-rgb 变量输出');
 assert.ok(css.includes('body { background: var(--cc-bg)'), 'body 跟随皮肤');
 
-process.stdout.write(`skins.verify: ok (${SKINS.length} skins, 对比度门全过)\n`);
+// Studio migration: old automatic Graphite becomes light; explicit new choices persist.
+const storageDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+const documentDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'document');
+const saved = new Map<string, string>();
+try {
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key: string) => saved.get(key) ?? null,
+    setItem: (key: string, value: string) => saved.set(key, value),
+  } });
+  Object.defineProperty(globalThis, 'document', { configurable: true, value: { documentElement: { dataset: {} } } });
+  assert.equal(getSkin(), 'studio');
+  saved.set('cc.skin', 'graphite');
+  assert.equal(getSkin(), 'studio');
+  saved.set('cc.skin', 'nord');
+  assert.equal(getSkin(), 'nord');
+  applySkin('graphite');
+  assert.equal(getSkin(), 'graphite');
+  assert.equal(document.documentElement.dataset.ccSkin, 'graphite');
+  applySkin('studio');
+  assert.equal(getSkin(), 'studio');
+  assert.equal(document.documentElement.dataset.ccSkin, undefined);
+  saved.set('cc.skin.studio-v1', 'unknown');
+  assert.equal(getSkin(), 'studio');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new Error('blocked'); } });
+  assert.equal(getSkin(), 'studio');
+} finally {
+  if (storageDescriptor) Object.defineProperty(globalThis, 'localStorage', storageDescriptor);
+  else Reflect.deleteProperty(globalThis, 'localStorage');
+  if (documentDescriptor) Object.defineProperty(globalThis, 'document', documentDescriptor);
+  else Reflect.deleteProperty(globalThis, 'document');
+}
+process.stdout.write(`skins.verify: ok (${SKINS.length} skins, contrast and persistence passed)\n`);

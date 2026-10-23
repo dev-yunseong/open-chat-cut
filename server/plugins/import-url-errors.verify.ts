@@ -14,6 +14,8 @@ for (const name of PROXY_NAMES) delete process.env[name];
 const { PublicConnectTimeoutError, PublicResponseTimeoutError } = await import('../safe-public-fetch.ts');
 const { ImportUnreachableError, unreachableImportError } = await import('./import-url-errors.ts');
 const { setKeys } = await import('../keystore.ts');
+// Modified 2026-10-23: keep the original Chinese assertions explicit.
+await setKeys({ UI_LOCALE: 'zh' });
 
 const REMOTE = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 const withCode = (code: string): Error => Object.assign(new Error(`connect ${code} 159.106.121.75:443`), { code });
@@ -68,7 +70,7 @@ try {
 }
 
 // The message follows the interface language the browser mirrored into UI_LOCALE; unset
-// keeps the original Chinese, so nothing changes for existing installs.
+// uses Korean in this fork; explicit choices keep their original language.
 await setKeys({ UI_LOCALE: 'en' });
 try {
   const english = unreachableImportError(withCode('ETIMEDOUT'), REMOTE);
@@ -83,7 +85,11 @@ try {
   await setKeys({ UI_LOCALE: 'it' });
   assert.match(unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message, /Impossibile connettersi/);
   await setKeys({ UI_LOCALE: 'nonsense' });
-  assert.match(unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message, /无法连接到/, 'an unknown locale falls back to Chinese');
+  assert.match(unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message, /연결할 수 없습니다/, 'an unknown locale falls back to Korean');
+  await setKeys({ UI_LOCALE: 'ko' });
+  const korean = unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message;
+  assert.match(korean, /설정 → 에이전트 모델/);
+  assert.doesNotMatch(korean, /[一-龥]/);
 } finally {
   await setKeys({ UI_LOCALE: '' });
 }

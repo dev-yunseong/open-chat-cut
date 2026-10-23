@@ -25,8 +25,8 @@ async function configFor(target: string): Promise<BuilderConfig> {
 const arm64 = await configFor('darwin-arm64');
 assert.deepEqual(arm64.publish, [{
   provider: 'github',
-  owner: '0xsline',
-  repo: 'OpenChatCut',
+  owner: 'dev-yunseong',
+  repo: 'open-chat-cut',
   channel: 'latest-arm64',
 }]);
 assert.deepEqual(arm64.mac?.target, ['dmg', 'zip'], 'macOS updates need a zip artifact in addition to the DMG');
@@ -98,6 +98,15 @@ assert.equal(
 );
 
 const windows = await configFor('win32-x64');
+// Modified 2026-10-23: every shipped platform must stay on the fork's feed.
+for (const [target, config] of Object.entries({
+  'darwin-arm64': arm64, 'darwin-x64': x64, 'linux-x64': linux, 'win32-x64': windows,
+})) {
+  assert.deepEqual(config.publish, [{
+    provider: 'github', owner: 'dev-yunseong', repo: 'open-chat-cut',
+    channel: target.endsWith('arm64') ? 'latest-arm64' : 'latest-x64',
+  }], `${target} must receive updates exclusively from this fork`);
+}
 assert.equal(
   windows.files?.includes('!node_modules/sqlite-vec-windows-x64/**'),
   false,
@@ -157,7 +166,7 @@ assert.match(
   'Linux packaging must pass the categorized electron-builder config path',
 );
 
-const workflow = await readFile(new URL('../.github/workflows/desktop.yml', import.meta.url), 'utf8');
+const workflow = (await readFile(new URL('../.github/workflows/desktop.yml', import.meta.url), 'utf8')).replace(/\r\n/g, '\n');
 for (const metadata of ['latest-arm64-mac.yml', 'latest-x64-mac.yml', 'latest-x64.yml', 'latest-x64-linux.yml']) {
   assert.ok(workflow.includes(`release/${metadata}`), `desktop jobs must upload ${metadata}`);
 }
@@ -282,6 +291,12 @@ for (const smokeName of [
 }
 
 const draftIndex = workflow.indexOf('- name: Create or reuse draft release');
+assert.match(workflow, /release:\s*\n\s+types: \[published\]/, 'published releases must trigger desktop builds');
+assert.match(workflow, /name: Verify release version\s*\n\s+if: github.event_name == 'release' \|\| startsWith/, 'every published release must validate its tag version');
+for (const name of ['Create or reuse draft release', 'Publish verified draft']) {
+  assert.ok(workflow.includes(`- name: ${name}\n        if: github.event_name == 'workflow_dispatch'`), 'published releases must retain their notes and publication state');
+}
+assert.match(workflow, /\$GITHUB_EVENT_NAME" == "workflow_dispatch" &&/, 'only manually dispatched releases require draft state during upload verification');
 const uploadIndex = workflow.indexOf('- name: Upload and verify release assets');
 const publishIndex = workflow.indexOf('- name: Publish verified draft');
 assert.ok(

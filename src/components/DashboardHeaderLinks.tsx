@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties, type Dispatch, type Re
 import { useT } from '../i18n/locale';
 import { theme } from '../theme';
 import { Icon } from './icons';
+import { SourceLinks } from './SourceLinks';
 
 const PROJECT_REPOSITORY_URL = 'https://github.com/0xsline/OpenChatCut';
 const AUTHOR_EMAIL = 'hl2535771@gmail.com';
@@ -37,6 +38,8 @@ export function DashboardHeaderLinks() {
 
   return (
     <span ref={contactRef} style={linkGroup}>
+      {/* Modified 2026-10-23: retain upstream attribution and expose fork source. */}
+      <SourceLinks />
       <button
         type="button"
         onClick={() => setContactOpen((open) => !open)}

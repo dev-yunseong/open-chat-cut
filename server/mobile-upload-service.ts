@@ -51,7 +51,8 @@ interface MobileUploadSession extends MobileUploadSessionSnapshot {
   activeUploads: Set<Promise<void>>;
 }
 
-export type MobilePageLocale = 'zh' | 'en' | 'it' | 'ru';
+// Modified 2026-10-23: Korean phone upload page and default locale.
+export type MobilePageLocale = 'ko' | 'zh' | 'en' | 'it' | 'ru';
 
 interface MobileUploadServiceOptions {
   bindHost?: string;
@@ -154,6 +155,12 @@ async function validateMediaSignature(path: string, mime: string): Promise<boole
 function mobilePage(locale: MobilePageLocale): string {
   const copyLocale = locale === 'it' ? 'en' : locale;
   const copy = {
+    ko: {
+      pageTitle: '휴대폰에서 업로드', title: 'OpenChatCut으로 미디어 보내기',
+      hint: '휴대폰의 동영상, 이미지 또는 오디오를 선택하세요. 두 기기를 같은 로컬 네트워크에 연결하세요.',
+      choose: '미디어 선택', multiple: '여러 파일을 선택할 수 있습니다. 업로드가 모두 끝날 때까지 이 페이지를 열어 두세요.',
+      waiting: '업로드 대기 중', sent: '전송 완료', failed: '업로드 실패', interrupted: '네트워크 연결 끊김',
+    },
     en: {
       pageTitle: 'Upload from phone', title: 'Send media to OpenChatCut',
       hint: 'Choose video, images, or audio from your phone. Keep both devices on the same local network.',
@@ -221,7 +228,7 @@ export class MobileUploadService {
     };
   }
 
-  async createSession(locale: MobilePageLocale = 'zh'): Promise<MobileUploadSessionSnapshot> {
+  async createSession(locale: MobilePageLocale = 'ko'): Promise<MobileUploadSessionSnapshot> {
     const addresses = this.options.addresses();
     if (addresses.length === 0) throw new Error('no LAN IPv4 address available');
     await this.ensureServer();

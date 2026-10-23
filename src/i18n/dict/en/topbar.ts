@@ -1,5 +1,6 @@
 // EN dictionary (field fragmentation, key = Chinese original text). Data files are exempt from the upper limit of row count.
 export default {
+  '源代码': 'Source code',
   '切换界面语言': 'Switch UI language',
   '返回工程列表': 'Back to projects',
   '双击重命名': 'Double-click to rename',
@@ -13,6 +14,9 @@ export default {
   '导出中…': 'Exporting…',
   '导出': 'Export',
   '账户': 'Account',
+  '明亮工作室': 'Studio · Light',
+  '让灵感成为下一帧。': 'A new frame for your ideas.',
+  '从一个想法开始，把故事剪成你喜欢的样子。': 'Start with an idea. Shape it into a story that feels like you.',
   '窗口控制': 'Window controls',
   '关闭窗口': 'Close window',
   '最小化窗口': 'Minimize window',
