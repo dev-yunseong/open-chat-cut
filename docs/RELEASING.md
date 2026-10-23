@@ -8,6 +8,8 @@
 
 1. PR을 검토하고 병합한다. Actions가 비활성화된 fork라면 저장소 Actions에서 활성화한다.
 2. `npm version <새 버전> --no-git-tag-version`으로 package.json과 package-lock.json을 함께 갱신하여 커밋한다.
+   `.github/ISSUE_TEMPLATE/bug_report_en.yml`과 `bug_report_zh.yml`의 첫 버전 선택지도 함께 갱신하고,
+   `node scripts/issue-template-version.verify.mjs`로 일치 여부를 확인한다.
 3. 그 커밋에 `v<새 버전>` 태그를 지정한 GitHub Release를 게시한다. 예를 들어 프로젝트 버전이 `0.2.18`이면 태그는 `v0.2.18`이다.
 4. Actions의 `desktop` 실행이 끝나면 같은 릴리스의 Assets에서 설치 파일을 받는다.
 
