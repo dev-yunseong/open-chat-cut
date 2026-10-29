@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { resolveUpstreamUpdateAction } from './upstreamUpdateAction';
-import { formatDisplayVersion, mapDesktopUpdateState, queryLatestUpstreamRelease } from './upstreamUpdate';
+import { formatDisplayVersion, mapDesktopUpdateState, queryLatestUpstreamRelease, UPSTREAM_RELEASES_URL } from './upstreamUpdate';
 
 assert.equal(formatDisplayVersion('0.1.7'), 'V0.1.7');
 assert.equal(formatDisplayVersion('v0.1.7'), 'V0.1.7');
+assert.equal(UPSTREAM_RELEASES_URL, 'https://github.com/dev-yunseong/open-chat-cut/releases/latest');
 
 const samples = [
   { current: '0.1.7', tag: 'v0.1.7', available: false },
@@ -21,7 +22,7 @@ for (const sample of samples) {
       headers: { 'content-type': 'application/json' },
     });
   });
-  assert.equal(requestedUrl, 'https://api.github.com/repos/0xsline/OpenChatCut/releases/latest');
+  assert.equal(requestedUrl, 'https://api.github.com/repos/dev-yunseong/open-chat-cut/releases/latest');
   assert.equal(result.latestVersion, sample.tag);
   assert.equal(result.updateAvailable, sample.available, `${sample.current} compared with ${sample.tag}`);
 }
@@ -75,4 +76,4 @@ assert.deepEqual(mapDesktopUpdateState({
   source: 'auto',
 }), { phase: 'idle', visible: false });
 
-console.log('upstreamUpdate.verify: official release comparison passed');
+console.log('upstreamUpdate.verify: fork release comparison passed');
