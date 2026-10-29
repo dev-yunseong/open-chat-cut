@@ -46,6 +46,13 @@ export class DesktopUpdateService {
   }
 
   private configureUpdater(): void {
+    // Pin both release checks and asset downloads independently of app-update.yml.
+    this.updater.setFeedURL({
+      provider: 'github',
+      owner: 'dev-yunseong',
+      repo: 'open-chat-cut',
+      channel: process.arch === 'arm64' ? 'latest-arm64' : 'latest-x64',
+    });
     this.updater.autoDownload = false;
     this.updater.autoInstallOnAppQuit = false;
     this.updater.allowDowngrade = false;
