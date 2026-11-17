@@ -1,5 +1,6 @@
 export { loadProjectThumb, saveProjectThumb } from './projectThumbStore';
 import type { ProjectDoc, TimelineState } from '../editor/types';
+import { t } from '../i18n/locale';
 import type { LlmProvider } from '../../shared/llm-providers';
 import { CURRENT_PROJECT_VERSION } from '../../shared/project-version';
 import {
@@ -491,5 +492,5 @@ const ADJ = ['流光', '静默', '暖阳', '深蓝', '轻盈', '锋利', '柔和
 const NOUN = ['序曲', '航迹', '棱镜', '潮汐', '织机', '回响', '飞羽', '砂丘', '苔原', '穹顶', '流域', '星图'];
 export function randomProjectName(): string {
   const pick = (a: string[]) => a[Math.floor(Math.random() * a.length)];
-  return `${pick(ADJ)}${pick(NOUN)}`;
+  return t('{adjective}{noun}', { adjective: t(pick(ADJ)), noun: t(pick(NOUN)) });
 }

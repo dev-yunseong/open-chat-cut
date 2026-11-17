@@ -173,4 +173,7 @@ assert.strictEqual(spDraft.getState().items.find((i) => i.id === 'c1')!.transcri
 const epSchema = PROJECT_TOOL_SCHEMAS.find((t) => t.name === 'edit_project')!;
 assert.ok('id' in (epSchema.input_schema as { properties: Record<string, unknown> }).properties, 'edit_project schema has top-level id');
 
+const unnamed = await execProjectTool('create_project', { name: '   ' }, ctx) as { name: string };
+assert.strictEqual(unnamed.name, '새 프로젝트');
+
 console.log('project-tools.check: ok');
