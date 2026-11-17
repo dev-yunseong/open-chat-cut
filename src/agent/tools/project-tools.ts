@@ -1,6 +1,7 @@
 export { PROJECT_TOOL_SCHEMAS, PROJECT_TOOL_NAMES } from './schemas/project-tools';
 import type { AgentContext } from '../context';
 import type { ProjectDoc, TimelineState } from '../../editor/types';
+import { ensureLocaleDict, getLocale, t } from '../../i18n/locale';
 import { hasOperationalTranscript } from '../../transcript/types';
 import {
   docFromTimeline,
@@ -117,9 +118,9 @@ async function execList(args: Args): Promise<unknown> {
 }
 
 async function execCreate(args: Args): Promise<unknown> {
-  const name = typeof args.name === 'string' && args.name.trim()
-    ? args.name.trim()
-    : '新工程';
+  const suppliedName = typeof args.name === 'string' ? args.name.trim() : '';
+  if (!suppliedName) await ensureLocaleDict(getLocale());
+  const name = suppliedName || t('新建工程');
   const description = typeof args.description === 'string' ? args.description : undefined;
   const doc = emptyProjectDoc({
     width: typeof args.compositionWidth === 'number' ? args.compositionWidth : undefined,

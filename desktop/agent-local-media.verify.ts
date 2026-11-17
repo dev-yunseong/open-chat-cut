@@ -41,11 +41,11 @@ try {
   assert.equal((await browseLocalMedia({ path: root, recursive: true })).truncated, true);
 
   seedKeystore({ AGENT_IMPORT_ROOTS: join(root, 'Interview') });
-  await assert.rejects(browseLocalMedia({ path: root }), /已添加的目录/);
+  await assert.rejects(browseLocalMedia({ path: root }), /등록된 폴더/);
   assert.equal((await browseLocalMedia({ path: join(root, 'Interview') })).entries.length, 1);
   if (process.platform !== 'win32') {
     await symlink(root, join(root, 'Interview', 'escape'), 'dir');
-    await assert.rejects(browseLocalMedia({ path: join(root, 'Interview', 'escape') }), /已添加的目录/);
+    await assert.rejects(browseLocalMedia({ path: join(root, 'Interview', 'escape') }), /등록된 폴더/);
     const nested = await browseLocalMedia({ path: join(root, 'Interview'), recursive: true });
     assert.equal(nested.entries.length, 1, 'recursive scan does not follow symlink cycles');
     const alias = join(root, 'alias');
@@ -55,7 +55,7 @@ try {
       'explicit symlink roots remain browsable after canonicalization');
   }
   seedKeystore({ AGENT_IMPORT_ROOTS: join(root, 'missing-root') });
-  await assert.rejects(resolveAgentMediaPath(join(root, 'A.MP4')), /已添加的目录/);
+  await assert.rejects(resolveAgentMediaPath(join(root, 'A.MP4')), /등록된 폴더/);
 } finally {
   seedKeystore({ AGENT_IMPORT_ROOTS: '' });
   await rm(fixture, { recursive: true, force: true });

@@ -34,6 +34,7 @@ function readInitial(): Locale {
 }
 
 let current: Locale = readInitial();
+let revision = 0;
 if (typeof document !== 'undefined') document.documentElement.lang = DOCUMENT_LANG[current];
 const subscribers = new Set<() => void>();
 
@@ -64,6 +65,7 @@ export function localizedCatalogText(
 }
 
 function notifySubscribers(): void {
+  revision += 1;
   subscribers.forEach((notify) => notify());
 }
 
@@ -117,8 +119,8 @@ export function useT(): typeof t {
       subscribers.add(onChange);
       return () => subscribers.delete(onChange);
     },
-    () => current,
-    () => current,
+    () => revision,
+    () => revision,
   );
   return t;
 }

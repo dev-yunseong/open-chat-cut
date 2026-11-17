@@ -11,8 +11,10 @@ import transcript from './transcript';
 import settings from './settings';
 import chat from './chat';
 import review from './review';
+import projects from './projects';
 
 export const KO: Record<string, string> = {
   ...core, ...captions, ...chat, ...components, ...exportPanel, ...fx,
   ...library, ...media, ...review, ...settings, ...timeline, ...transcript,
+  ...projects,
 };

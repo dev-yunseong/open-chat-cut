@@ -44,6 +44,13 @@ if (process.argv.includes('--initial')) {
   const { ensureLocaleDict, getLocale, setLocale, t, tData, localeLanguageName } = await import('./locale');
   assert.equal(getLocale(), 'ko');
   await ensureLocaleDict('ko');
+  const { randomProjectName } = await import('../persist/projectStore');
+  const { parseProjectEnvelope } = await import('../persist/projectTransfer');
+  assert.match(randomProjectName(), /^[\p{Script=Hangul} ]+$/u);
+  assert.deepEqual(parseProjectEnvelope('broken'), { error: '올바른 JSON 파일이 아닙니다.' });
+  assert.deepEqual(parseProjectEnvelope('{}'), {
+    error: '지원하지 않는 형식입니다. openchatcut-project@1 형식이 필요합니다.',
+  });
   assert.equal(t('新建工程'), '새 프로젝트');
   assert.equal(t('已选择 {n} 个片段', { n: 3 }), '클립 3개 선택됨');
   assert.equal(tData('竖屏·重点词弹出'), '세로 · 핵심 단어 팝업');
@@ -52,6 +59,8 @@ if (process.argv.includes('--initial')) {
   await ensureLocaleDict('en');
   assert.equal(saved, 'en');
   assert.equal(t('新建工程'), 'New Project');
+  assert.match(randomProjectName(), /^[a-z -]+$/i);
+  assert.deepEqual(parseProjectEnvelope('broken'), { error: 'The file is not valid JSON.' });
   setLocale('ko');
   assert.equal(saved, 'ko');
   assert.equal(t('新建工程'), '새 프로젝트');
@@ -62,6 +71,7 @@ if (process.argv.includes('--initial')) {
   assert.match(html, /https:\/\/github.com\/dev-yunseong\/open-chat-cut/);
   assert.match(html, /소스 코드/);
   assert.match(html, /https:\/\/github.com\/dev-yunseong\/open-chat-cut\/blob\/main\/LICENSE/);
-  assert.equal(readFileSync('public/LICENSE.txt', 'utf8'), readFileSync('LICENSE', 'utf8'));
+  const licenseText = (path: string) => readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
+  assert.equal(licenseText('public/LICENSE.txt'), licenseText('LICENSE'));
   console.log(`korean.verify: ${Object.keys(EN).length} UI keys, templates, placeholders, startup, persistence and source access passed`);
 }
